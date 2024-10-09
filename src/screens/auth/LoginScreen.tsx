@@ -11,10 +11,7 @@ import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import ButtonComponent from "../../Components/ButtonComponent";
 import { globalStyles } from "../../styles/globalStyles";
-import {
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "./firebaseConfig";
 
 const LoginScreen = ({ navigation }: any) => {
@@ -41,6 +38,15 @@ const LoginScreen = ({ navigation }: any) => {
     }
   };
 
+  const enterEmail = (val: string) => {
+    setEmail(val);
+    setErrorText("");
+  };
+  const enterPassword = (val: string) => {
+    setPassword(val);
+    setErrorText("");
+  };
+
   return (
     <Container>
       <SpaceComponent height={50} />
@@ -62,7 +68,7 @@ const LoginScreen = ({ navigation }: any) => {
         <View>
           <InputComponent
             value={email}
-            onChange={(val) => setEmail(val)}
+            onChange={enterEmail}
             prefix={
               <MaterialCommunityIcons
                 name="email-outline"
@@ -76,7 +82,7 @@ const LoginScreen = ({ navigation }: any) => {
           />
           <InputComponent
             value={password}
-            onChange={(val) => setPassword(val)}
+            onChange={enterPassword}
             prefix={
               <MaterialIcons name="lock-outline" size={24} color="white" />
             }
@@ -84,11 +90,14 @@ const LoginScreen = ({ navigation }: any) => {
             title="Password"
             isPassWord
           />
-          {errorText && (
-            <TextComponent text={errorText} color="coral" flex={0} />
-          )}
+            {/* error text */}
+            <View style={{height:20}}>
+            {errorText && (
+              <TextComponent text={errorText} color="coral" flex={0} />
+            )}
+            </View>
         </View>
-        <SpaceComponent height={40} />
+        <SpaceComponent height={20} />
         <ButtonComponent
           isLoading={isLoading}
           text="LOGIN"

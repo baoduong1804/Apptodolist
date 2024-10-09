@@ -41,7 +41,7 @@ const HomeScreen = ({navigation}:any) => {
         <TouchableOpacity
           onPress={async () => auth.signOut()}
         >
-        <Ionicons name="exit-outline" size={30} color="coral" />
+        <AntDesign name="logout" size={26} color={colors.orange} />
         </TouchableOpacity>
         </RowComponent>
       </SectionComponent>

@@ -11,6 +11,7 @@ import RowComponent from "./RowComponent";
 import { globalStyles } from "../styles/globalStyles";
 import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import Octicons from "@expo/vector-icons/Octicons";
+import { colors } from "../constants/colors";
 
 interface Props {
   value: string;
@@ -23,6 +24,7 @@ interface Props {
   multible?: boolean;
   numberOfLine?: number;
   isPassWord?: boolean;
+  isNotPaddingBottom?:boolean
 }
 const InputComponent = (props: Props) => {
   const {
@@ -36,11 +38,12 @@ const InputComponent = (props: Props) => {
     multible,
     numberOfLine,
     isPassWord,
+    isNotPaddingBottom
   } = props;
 
   const [showPass, setShowPass] = useState(false);
   return (
-    <View style={{ marginBottom: 16 }}>
+    <View style={{ marginBottom: isNotPaddingBottom ? 0 : 16 }}>
       {title && <TitleComponent text={title} />}
       <RowComponent
         styles={[
@@ -69,7 +72,7 @@ const InputComponent = (props: Props) => {
               },
             ]}
             placeholder={placeholder ?? ""}
-            placeholderTextColor={"#676767"}
+            placeholderTextColor={colors.placeHolderColor}
             value={value}
             onChangeText={(val) => onChange(val)}
             numberOfLines={numberOfLine}

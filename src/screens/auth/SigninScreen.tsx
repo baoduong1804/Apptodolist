@@ -34,9 +34,9 @@ const SigninScreen = ({ navigation }: any) => {
   
   const handleSigninWithEmail = async () => {
     setIsLoading(true)
-    try {
-          // Sign up
-          await createUserWithEmailAndPassword(auth, email, password);
+    try {// try có thể bắt lỗi và nhận lỗi là error để xử lý trong catch
+          // Sign up 
+          await createUserWithEmailAndPassword(auth, email, password);//await khi hàm bất đồng bộ đc hoàn thành xong thì mới xử lý công việc tiếp theo
           setErrorText('User created successfully!');
         }
     
@@ -46,7 +46,14 @@ const SigninScreen = ({ navigation }: any) => {
       setIsLoading(false)
     }
   };
-
+  const enterEmail = (val: string) => {
+    setEmail(val);
+    setErrorText("");
+  };
+  const enterPassword = (val: string) => {
+    setPassword(val);
+    setErrorText("");
+  };
   return (
     <Container>
       <SpaceComponent height={50} />
@@ -68,7 +75,7 @@ const SigninScreen = ({ navigation }: any) => {
         <View>
           <InputComponent
             value={email}
-            onChange={(val) => setEmail(val)}
+            onChange={enterEmail}
             prefix={
               <MaterialCommunityIcons
                 name="email-outline"
@@ -82,16 +89,21 @@ const SigninScreen = ({ navigation }: any) => {
           />
           <InputComponent
             value={password}
-            onChange={(val) => setPassword(val)}
+            onChange={enterPassword}
             prefix={
               <MaterialIcons name="lock-outline" size={24} color="white" />
             }
             placeholder="Password"
             title="Password"
           />
-          {errorText && <TextComponent text={errorText} color="coral" flex={0}/>}
+          {/* error text */}
+          <View style={{height:20}}>
+            {errorText && (
+              <TextComponent text={errorText} color="coral" flex={0} />
+            )}
+            </View>
         </View>
-        <SpaceComponent height={40} />
+        <SpaceComponent height={20} />
         <ButtonComponent
           isLoading={isLoading}
           text="SIGN IN"

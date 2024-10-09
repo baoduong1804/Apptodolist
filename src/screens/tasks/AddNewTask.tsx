@@ -1,15 +1,16 @@
 import { View, Text, Button } from "react-native";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Container from "../../Components/Container";
-import TextComponent from "../../Components/TextComponent";
 import SpaceComponent from "../../Components/SpaceComponent";
 import { TaskModel } from "../../models/TaskModel";
 import InputComponent from "../../Components/InputComponent";
-import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
-import MaterialIcons from "@expo/vector-icons/MaterialIcons";
 import SectionComponent from "../../Components/SectionComponent";
 import DateTimePickerComponent from "../../Components/DateTimePickerComponent";
 import RowComponent from "../../Components/RowComponent";
+import DropdownPicker from "../../Components/DropdownPicker";
+import { SelectModel } from "../../models/SelecModel";
+import firestore, { collection, getDocs } from "firebase/firestore";
+import { db } from "../auth/firebaseConfig";
 
 const initValue: TaskModel = {
   title: "",
@@ -20,19 +21,50 @@ const initValue: TaskModel = {
   uids: [],
   fileUrls: [],
 };
+
+
 const AddNewTask = ({ navigation }: any) => {
   const [taskDetail, setTaskDetail] = useState<TaskModel>(initValue);
-  const handleChangeValue = (id: string, value: string | Date) => {
+  const [usersSelect, setUsersSelect] = useState<SelectModel[]>([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const usersCollection = collection(db, "users"); // Tạo tham chiếu tới collection 'users'
+        const userSnapshot = await getDocs(usersCollection); // Lấy danh sách document
+        const userList = userSnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })); // Chuyển đổi thành mảng
+        const items: SelectModel[] = []
+        userList.forEach(item => {
+          items.push({
+            label:item.name,
+            value: item.id
+          })
+        })
+        setUsersSelect(items)
+      } catch (error) {
+        console.error("Error fetching users: ", error);
+      } finally {
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+
+  const handleChangeValue = (id: string, value: string | Date | string[]) => {
     const item: any = { ...taskDetail };
     item[`${id}`] = value;
     setTaskDetail(item);
   };
   const handleAddNewTask = async () => {
-    console.log(taskDetail);
+    console.log('taskDetail',taskDetail);
   };
 
   return (
-    <Container back title="Add New Screen">
+    <Container back title="Add New Screen" isScroll>
       <SectionComponent>
         <InputComponent
           value={taskDetail.title}
@@ -58,26 +90,33 @@ const AddNewTask = ({ navigation }: any) => {
           title="Due date"
         />
         <RowComponent justify="space-between">
-          <View style={{flex:1}}>
-          <DateTimePickerComponent
-            selected={taskDetail.start}
-            onSelect={(val) => handleChangeValue("start", val)}
-            placeholder="choice"
-            type="time"
-            title="Start"
-          />
-          </View>
-          <SpaceComponent width={14}/>
-          <View style={{flex:1}}>
-          <DateTimePickerComponent
-            selected={taskDetail.end}
-            onSelect={(val) => handleChangeValue("end", val)}
-            placeholder="choice"
-            type="time"
-            title="End"
+          <View style={{ flex: 1 }}>
+            <DateTimePickerComponent
+              selected={taskDetail.start}
+              onSelect={(val) => handleChangeValue("start", val)}
+              placeholder="choice"
+              type="time"
+              title="Start"
             />
-            </View>
+          </View>
+          <SpaceComponent width={14} />
+          <View style={{ flex: 1 }}>
+            <DateTimePickerComponent
+              selected={taskDetail.end}
+              onSelect={(val) => handleChangeValue("end", val)}
+              placeholder="choice"
+              type="time"
+              title="End"
+            />
+          </View>
         </RowComponent>
+        <DropdownPicker
+          title="Member"
+          selected={taskDetail.uids}
+          items={usersSelect}
+          onSelect={val => handleChangeValue('uids',val)}
+          multible
+        />
       </SectionComponent>
 
       <SectionComponent>
