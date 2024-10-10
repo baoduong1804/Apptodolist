@@ -13,8 +13,7 @@ import ButtonComponent from "../../Components/ButtonComponent";
 import { globalStyles } from "../../styles/globalStyles";
 import { colors } from "../../constants/colors";
 import {auth}  from './firebaseConfig';
-import { initializeApp, getApp, FirebaseApp } from 'firebase/app';
-import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, signOut } from '@firebase/auth';
+import { createUserWithEmailAndPassword} from '@firebase/auth';
 
 const SigninScreen = ({ navigation }: any) => {
   const [email, setEmail] = useState("");
@@ -95,6 +94,7 @@ const SigninScreen = ({ navigation }: any) => {
             }
             placeholder="Password"
             title="Password"
+            isPassWord
           />
           {/* error text */}
           <View style={{height:20}}>

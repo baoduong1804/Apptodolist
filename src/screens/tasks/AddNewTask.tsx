@@ -9,7 +9,7 @@ import DateTimePickerComponent from "../../Components/DateTimePickerComponent";
 import RowComponent from "../../Components/RowComponent";
 import DropdownPicker from "../../Components/DropdownPicker";
 import { SelectFiles, SelectModel } from "../../models/SelecModel";
-import firestore, { collection, getDocs } from "firebase/firestore";
+import  { collection, getDocs, addDoc } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import ButtonComponent from "../../Components/ButtonComponent";
 import TitleComponent from "../../Components/TitleComponent";
@@ -35,6 +35,8 @@ const AddNewTask = ({ navigation }: any) => {
   const [taskDetail, setTaskDetail] = useState<TaskModel>(initValue);
   const [usersSelect, setUsersSelect] = useState<SelectModel[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<SelectFiles[]>([])
+  const [isLoading, setIsLoading] = useState(false);
+  
   useEffect(() => {
     const fetchUsers = async () => {
       try {
@@ -45,7 +47,7 @@ const AddNewTask = ({ navigation }: any) => {
           ...doc.data(),
         })); // Chuyển đổi thành mảng
         const items: SelectModel[] = []
-        userList.forEach(item => {
+        userList.forEach((item:any) => {
           items.push({
             label:item.name,
             value: item.id
@@ -62,18 +64,49 @@ const AddNewTask = ({ navigation }: any) => {
   }, []);
 
 
+  //send data firestore database
+  const handleAddNewTask = async () => {
+    setIsLoading(true)
+    try {
+      // Upload từng file lên Firebase Storage và lấy URL
+      const fileUrls = await Promise.all(selectedFiles.map(async (file) => {
+        console.log('file', file);
+        return await uploadFile(file); // uploadFile trả về URL
+      }));
+  
+      // Tạo dữ liệu cần lưu
+      const data = {
+        ...taskDetail,
+        fileUrls: fileUrls, // Gán URL file đã upload
+      };
+      
+      // Lọc các trường undefined
+      const filteredData = Object.fromEntries(
+        Object.entries(data).filter(([_, value]) => value !== undefined)
+      );
+  
+      console.log('data to be added', filteredData);
+      
+      // Lưu data vào Firestore
+      const tasksCollection = collection(db, "tasks");
+      await addDoc(tasksCollection, filteredData); // Thêm document mới vào collection
+      
+      console.log("Task added successfully!");
+      setIsLoading(false)
+      navigation.goBack()
+    } catch (error) {
+      console.error("Error adding task: ", error);
+    }
+  };
+  
+
   const handleChangeValue = (id: string, value: string | Date | string[]) => {
     const item: any = { ...taskDetail };
     item[`${id}`] = value;
     setTaskDetail(item);
   };
-  const handleAddNewTask = async () => {
-    console.log('taskDetail',taskDetail);
-    for (const file of selectedFiles) {
-      await uploadFile(file);
-    }
-  };
 
+  //Chọn files
     const handlePickerDocument = async () => {
     try {
       // Mở trình chọn file
@@ -104,28 +137,32 @@ const AddNewTask = ({ navigation }: any) => {
   }
 
   // Hàm upload file
-const uploadFile = async (file: SelectFiles) => {
-  try {
-    // Khởi tạo Firebase Storage
-    const storage = getStorage();
-    
-    // Tạo một reference tới vị trí bạn muốn lưu file
-    const storageRef = ref(storage, `files/${file.name}`);
-    
-    // Đọc file từ URI và chuẩn bị upload
-    const response = await FileSystem.readAsStringAsync(file.uri, {
-      encoding: FileSystem.EncodingType.Base64,
-    });
-    
-    // Upload file
-    const blob = new Blob([response], { type: 'application/octet-stream' }); // Chuyển đổi base64 thành blob
-    await uploadBytes(storageRef, blob);
-    
-    console.log("File uploaded successfully!");
-  } catch (error) {
-    console.error("Error uploading file: ", error);
-  }
-};
+  const uploadFile = async (file: SelectFiles) => {
+    try {
+      // Khởi tạo Firebase Storage
+      const storage = getStorage();
+      
+      // Tạo một reference tới vị trí bạn muốn lưu file
+      const storageRef = ref(storage, `files/${file.name}`);
+  
+      // Fetch file từ URI và tạo Blob
+      const response = await fetch(file.uri);
+      const blob = await response.blob();
+      
+      // Upload file
+      await uploadBytes(storageRef, blob);
+      
+      console.log("File uploaded successfully!");
+  
+      // Trả về URL của file đã upload
+      const fileUrl = `https://firebasestorage.googleapis.com/v0/b/${storage.bucket}/o/${encodeURIComponent(storageRef.fullPath)}?alt=media`;
+      return fileUrl;
+    } catch (error) {
+      console.error("Error uploading file: ", error);
+      throw error; // Ném lỗi để quản lý ở nơi gọi
+    }
+  };
+  
 
   return (
     <Container back title="Add New Screen" isScroll>
@@ -208,7 +245,7 @@ const uploadFile = async (file: SelectFiles) => {
       {/* Button save */}
       <SectionComponent>
       <SpaceComponent height={20}/>
-        <ButtonComponent text="SAVE" onPress={handleAddNewTask} />
+        <ButtonComponent text="SAVE" onPress={handleAddNewTask} isLoading={isLoading} />
         <SpaceComponent height={60}/>
       </SectionComponent>
     </Container>

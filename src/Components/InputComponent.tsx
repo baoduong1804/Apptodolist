@@ -24,7 +24,7 @@ interface Props {
   multible?: boolean;
   numberOfLine?: number;
   isPassWord?: boolean;
-  isNotPaddingBottom?:boolean
+  isNotPaddingBottom?: boolean;
 }
 const InputComponent = (props: Props) => {
   const {
@@ -38,10 +38,11 @@ const InputComponent = (props: Props) => {
     multible,
     numberOfLine,
     isPassWord,
-    isNotPaddingBottom
+    isNotPaddingBottom,
   } = props;
 
   const [showPass, setShowPass] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   return (
     <View style={{ marginBottom: isNotPaddingBottom ? 0 : 16 }}>
       {title && <TitleComponent text={title} />}
@@ -52,6 +53,8 @@ const InputComponent = (props: Props) => {
             minHeight: multible && numberOfLine ? 32 * numberOfLine : 32,
             alignItems: "flex-start",
             marginTop: 0,
+            borderWidth:1,
+            borderColor:isFocused ? colors.green : colors.gray
           },
         ]}
       >
@@ -61,6 +64,7 @@ const InputComponent = (props: Props) => {
             flex: 1,
             paddingLeft: prefix ? 10 : 0,
             paddingRight: affix ? 10 : 0,
+            
           }}
         >
           <TextInput
@@ -71,10 +75,14 @@ const InputComponent = (props: Props) => {
                 textAlignVertical: "top",
               },
             ]}
+            onFocus={() => setIsFocused(true)}
+             onBlur={() => setIsFocused(false)}
             placeholder={placeholder ?? ""}
             placeholderTextColor={colors.placeHolderColor}
             value={value}
-            onChangeText={(val) => onChange(val)}
+            onChangeText={(val) => {
+              onChange(val);
+            }}
             numberOfLines={numberOfLine}
             multiline={multible}
             secureTextEntry={isPassWord ? !showPass : false}
@@ -87,12 +95,12 @@ const InputComponent = (props: Props) => {
           </TouchableOpacity>
         )}
         {isPassWord && (
-          <TouchableOpacity onPress={()=>setShowPass(!showPass)}>
+          <TouchableOpacity onPress={() => setShowPass(!showPass)}>
             {showPass ? (
-          <Octicons name="eye-closed" size={24} color="white" />
-        ) : (
-          <Octicons name="eye" size={24} color="white" />
-        )}
+              <Octicons name="eye-closed" size={24} color="white" />
+            ) : (
+              <Octicons name="eye" size={24} color="white" />
+            )}
           </TouchableOpacity>
         )}
       </RowComponent>

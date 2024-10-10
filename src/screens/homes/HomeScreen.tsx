@@ -93,7 +93,7 @@ const HomeScreen = ({navigation}:any) => {
               <View style={{marginVertical:28}}>
                 <AvatarGroup uidsLength={10} />
               </View>
-              <ProgressBarComponent percent={70} size="large"/>
+              <ProgressBarComponent percent={70} size="large" duration={1000}/>
               <TextComponent text="Due, 2023 Match 03"/>
             </CardImageComponent>
           </View>
