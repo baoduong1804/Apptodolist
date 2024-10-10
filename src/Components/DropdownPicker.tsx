@@ -84,7 +84,6 @@ const DropdownPicker = (props: Props) => {
   //render Items
   const renderSelectedItem = (id:string,index:number) => {
     const item = items.find(element => element.value === id)
-    console.log("id: ",id)
     return (
         item && <RowComponent key={id}  
                 onPress={()=>handleRemoveItemSelected(index)}
