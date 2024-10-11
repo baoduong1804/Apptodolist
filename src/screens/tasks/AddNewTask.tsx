@@ -21,6 +21,7 @@ import { getStorage, ref, uploadBytes } from "firebase/storage";
 import * as FileSystem from 'expo-file-system';
 
 const initValue: TaskModel = {
+  id: "",
   title: "",
   description: "",
   dueDate: new Date(),
@@ -28,6 +29,7 @@ const initValue: TaskModel = {
   end: new Date(),
   uids: [],
   fileUrls: [],
+  progress:0
 };
 
 
@@ -132,7 +134,6 @@ const AddNewTask = ({ navigation }: any) => {
   // Tạo mảng mới mà không chứa file ở vị trí `index`
     const updatedFiles = selectedFiles.filter((_, i) => i !== index);
     setSelectedFiles(updatedFiles)
-      console.log(selectedFiles)
     
   }
 

@@ -1,5 +1,5 @@
-import { View, Text, TouchableOpacity } from "react-native";
-import React from "react";
+import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import React, { useEffect, useState } from "react";
 import Container from "../../Components/Container";
 import { globalStyles } from "../../styles/globalStyles";
 import RowComponent from "../../Components/RowComponent";
@@ -19,9 +19,36 @@ import AvatarGroup from "../../Components/AvatarGroup";
 import ProgressBarComponent from "../../Components/ProgressBarComponent";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {auth}  from '../auth/firebaseConfig';
+import { collection, getDocs, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { db } from '../auth/firebaseConfig'; // Assuming your Firestore config is exported from this file
+import { TaskModel } from "../../models/TaskModel";
 
 const HomeScreen = ({navigation}:any) => {
+  const [data, setData] = useState<any[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [tasks, setTasks] = useState<TaskModel[]>([]);
   const user  = auth.currentUser
+
+
+  useEffect(() => {
+    setIsLoading(true)
+    const unsubscribe = onSnapshot(collection(db, 'tasks'), (snapshot) => {
+      const items: TaskModel[] = []
+      snapshot.docs.forEach((doc:any) => {
+        items.push({
+          id:doc.id,
+          ...doc.data(),
+        })
+      });
+      // setData(docsData);
+      setIsLoading(false)
+      setTasks(items)
+    });
+  
+    // Clean up the listener on unmount
+    return () => unsubscribe();
+  }, []);
+
   return (
     <View style={{flex:1}}>
     <Container isScroll>
@@ -74,7 +101,8 @@ const HomeScreen = ({navigation}:any) => {
         </CardComponent>
       </SectionComponent>
       {/* Cards */}
-      <SectionComponent>
+      
+      {isLoading ? <ActivityIndicator/>: tasks.length > 0 ? <SectionComponent>
         <RowComponent styles={{ alignItems: "flex-start"}}>
           <View style={{ flex: 1}}>
             <CardImageComponent>
@@ -88,13 +116,13 @@ const HomeScreen = ({navigation}:any) => {
                   color="white"
                 />
               </TouchableOpacity>
-              <TitleComponent text="UX Design" />
-              <TextComponent text="Tag management mobile app" />
+              <TitleComponent text={tasks[0]?.title || "Title"} />
+              <TextComponent text={tasks[0]?.description || "description"} />
               <View style={{marginVertical:28}}>
-                <AvatarGroup uidsLength={10} />
+                <AvatarGroup uidsLength={tasks[0].uids?.length || 0} />
               </View>
-              <ProgressBarComponent percent={70} size="large" duration={1000}/>
-              <TextComponent text="Due, 2023 Match 03"/>
+              <ProgressBarComponent percent={tasks[0]?.progress || 0} size="large" duration={1000}/>
+              <TextComponent text={`Due ${tasks[0]?.dueDate?.toDate().toLocaleDateString('vi') || 'No due date'}`}/>
             </CardImageComponent>
           </View>
           <SpaceComponent width={16} />
@@ -111,9 +139,9 @@ const HomeScreen = ({navigation}:any) => {
                   color="white"
                 />
               </TouchableOpacity>
-              <TitleComponent text="API Payment"/>
+              <TitleComponent text={tasks[1]?.title || "Title"}/>
               <AvatarGroup uidsLength={4}/>
-              <ProgressBarComponent percent={20}/>
+              <ProgressBarComponent percent={tasks[1]?.progress || 0}/>
             </CardImageComponent>
              <SpaceComponent height={16} />
 
@@ -128,12 +156,13 @@ const HomeScreen = ({navigation}:any) => {
                   color="white"
                 />
               </TouchableOpacity>
-              <TitleComponent text="Update work"/>
-              <TextComponent text="Revision home page"/>
+              <TitleComponent text={tasks[2]?.title || "Title"} />
+              <TextComponent text={tasks[2]?.description || "description"} />
             </CardImageComponent>
           </View>
         </RowComponent>
-      </SectionComponent>
+      </SectionComponent> : <></>}
+
       {/* Urgents tasks */}
       <SectionComponent>
         <TitleComponent text="Urgents tasks"/>

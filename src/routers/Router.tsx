@@ -51,7 +51,7 @@ const Router = () => {
   );
 
   // Trả về MainRouter hoặc AuthRouter dựa vào isLogin
-  return isLogin ? MainRouter : AuthRouter;
+  return true ? MainRouter : AuthRouter;
 };
 
 export default Router;
