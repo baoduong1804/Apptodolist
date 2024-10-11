@@ -9,7 +9,7 @@ import DateTimePickerComponent from "../../Components/DateTimePickerComponent";
 import RowComponent from "../../Components/RowComponent";
 import DropdownPicker from "../../Components/DropdownPicker";
 import { SelectFiles, SelectModel } from "../../models/SelecModel";
-import  { collection, getDocs, addDoc } from "firebase/firestore";
+import  { collection, getDocs, addDoc, Timestamp, serverTimestamp } from "firebase/firestore";
 import { db } from "../auth/firebaseConfig";
 import ButtonComponent from "../../Components/ButtonComponent";
 import TitleComponent from "../../Components/TitleComponent";
@@ -24,12 +24,12 @@ const initValue: TaskModel = {
   id: "",
   title: "",
   description: "",
-  dueDate: new Date(),
+  dueDate: new Date, 
   start: new Date(),
   end: new Date(),
   uids: [],
   fileUrls: [],
-  progress:0
+  progress: 0,
 };
 
 
@@ -79,9 +79,10 @@ const AddNewTask = ({ navigation }: any) => {
       // Tạo dữ liệu cần lưu
       const data = {
         ...taskDetail,
+        updatedAt: serverTimestamp(),
         fileUrls: fileUrls, // Gán URL file đã upload
       };
-      
+      console.log('data ',data)
       // Lọc các trường undefined
       const filteredData = Object.fromEntries(
         Object.entries(data).filter(([_, value]) => value !== undefined)
@@ -139,6 +140,7 @@ const AddNewTask = ({ navigation }: any) => {
 
   // Hàm upload file
   const uploadFile = async (file: SelectFiles) => {
+    const bucket = "fir-auth-6ef43.appspot.com"
     try {
       // Khởi tạo Firebase Storage
       const storage = getStorage();
@@ -156,7 +158,7 @@ const AddNewTask = ({ navigation }: any) => {
       console.log("File uploaded successfully!");
   
       // Trả về URL của file đã upload
-      const fileUrl = `https://firebasestorage.googleapis.com/v0/b/${storage.bucket}/o/${encodeURIComponent(storageRef.fullPath)}?alt=media`;
+      const fileUrl = `https://firebasestorage.googleapis.com/v0/b/${bucket}/o/${encodeURIComponent(storageRef.fullPath)}?alt=media`;
       return fileUrl;
     } catch (error) {
       console.error("Error uploading file: ", error);

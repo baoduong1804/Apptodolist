@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator, TextInput } from "react-native";
 import React, { useEffect, useState } from "react";
 import Container from "../../Components/Container";
 import { globalStyles } from "../../styles/globalStyles";
@@ -19,7 +19,7 @@ import AvatarGroup from "../../Components/AvatarGroup";
 import ProgressBarComponent from "../../Components/ProgressBarComponent";
 import Ionicons from '@expo/vector-icons/Ionicons';
 import {auth}  from '../auth/firebaseConfig';
-import { collection, getDocs, onSnapshot, serverTimestamp } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { db } from '../auth/firebaseConfig'; // Assuming your Firestore config is exported from this file
 import { TaskModel } from "../../models/TaskModel";
 
@@ -37,6 +37,7 @@ const HomeScreen = ({navigation}:any) => {
       snapshot.docs.forEach((doc:any) => {
         items.push({
           id:doc.id,
+          updatedAt:serverTimestamp(),
           ...doc.data(),
         })
       });
@@ -49,6 +50,7 @@ const HomeScreen = ({navigation}:any) => {
     return () => unsubscribe();
   }, []);
 
+  // console.log('tasks: ',tasks[0].updatedAt.)
   return (
     <View style={{flex:1}}>
     <Container isScroll>
@@ -186,11 +188,11 @@ const HomeScreen = ({navigation}:any) => {
        paddingVertical:20,
        paddingHorizontal:60
     }}>
-      <TouchableOpacity activeOpacity={1} 
+      <TouchableOpacity activeOpacity={0.7} 
         onPress={() => navigation.navigate('AddNewTask')}
       style={
        [globalStyles.row,{
-        backgroundColor:colors.blueBottom,
+        backgroundColor:colors.blueButton,
         padding:10,
         borderRadius:100
        }]
