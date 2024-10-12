@@ -36,9 +36,8 @@ const HomeScreen = ({navigation}:any) => {
       const items: TaskModel[] = []
       snapshot.docs.forEach((doc:any) => {
         items.push({
-          id:doc.id,
-          updatedAt:serverTimestamp(),
           ...doc.data(),
+          id:doc.id,
         })
       });
       // setData(docsData);
@@ -50,7 +49,7 @@ const HomeScreen = ({navigation}:any) => {
     return () => unsubscribe();
   }, []);
 
-  // console.log('tasks: ',tasks[0].updatedAt.)
+  
   return (
     <View style={{flex:1}}>
     <Container isScroll>
@@ -107,7 +106,11 @@ const HomeScreen = ({navigation}:any) => {
       {isLoading ? <ActivityIndicator/>: tasks.length > 0 ? <SectionComponent>
         <RowComponent styles={{ alignItems: "flex-start"}}>
           <View style={{ flex: 1}}>
-            <CardImageComponent>
+            <CardImageComponent color="#BC2FFECC"
+            onPress={()=> navigation.navigate('TaskDetail', {
+              id:tasks[0]?.id,
+              color:'#BC2FFECC'
+            })}>
               <TouchableOpacity
                 onPress={() => {}}
                 style={[globalStyles.iconContainer]}
@@ -121,7 +124,7 @@ const HomeScreen = ({navigation}:any) => {
               <TitleComponent text={tasks[0]?.title || "Title"} />
               <TextComponent text={tasks[0]?.description || "description"} />
               <View style={{marginVertical:28}}>
-                <AvatarGroup uidsLength={tasks[0].uids?.length || 0} />
+                <AvatarGroup uidsLength={tasks[0]?.uids.length || 0} />
               </View>
               <ProgressBarComponent percent={tasks[0]?.progress || 0} size="large" duration={1000}/>
               <TextComponent text={`Due ${tasks[0]?.dueDate?.toDate().toLocaleDateString('vi') || 'No due date'}`}/>
@@ -130,7 +133,11 @@ const HomeScreen = ({navigation}:any) => {
           <SpaceComponent width={16} />
 
           <View style={{ flex: 1 }}>
-            <CardImageComponent color="#41C5FECC">
+            <CardImageComponent color="#41C5FECC" 
+            onPress={()=> navigation.navigate('TaskDetail', {
+              id:tasks[1]?.id,
+              color:"#41C5FECC"
+            })}>
               <TouchableOpacity
                 onPress={() => {}}
                 style={[globalStyles.iconContainer]}
@@ -142,12 +149,16 @@ const HomeScreen = ({navigation}:any) => {
                 />
               </TouchableOpacity>
               <TitleComponent text={tasks[1]?.title || "Title"}/>
-              <AvatarGroup uidsLength={4}/>
+              <AvatarGroup uidsLength={tasks[1]?.uids.length || 0}/>
               <ProgressBarComponent percent={tasks[1]?.progress || 0}/>
             </CardImageComponent>
              <SpaceComponent height={16} />
 
-            <CardImageComponent color="#FF983ECC">
+             <CardImageComponent color="#FF983ECC" 
+            onPress={()=> navigation.navigate('TaskDetail', {
+              id:tasks[2]?.id ?? "",
+              color:"#FF983ECC"
+            })}>
               <TouchableOpacity
                 onPress={() => {}}
                 style={[globalStyles.iconContainer]}

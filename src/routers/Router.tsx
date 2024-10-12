@@ -9,6 +9,7 @@ import LoginScreen from "../screens/auth/LoginScreen";
 import {auth} from '../screens/auth/firebaseConfig'
 import { onAuthStateChanged } from "firebase/auth";
 import SearchScreen from "../screens/SearchScreen";
+import TaskDetail from "../screens/tasks/TaskDetail";
 // // Cấu hình Firebase
 
 
@@ -36,6 +37,7 @@ const Router = () => {
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
       <Stack.Screen name="AddNewTask" component={AddNewTask} />
       <Stack.Screen name="SearchScreen" component={SearchScreen} />
+      <Stack.Screen name="TaskDetail" component={TaskDetail} />
     </Stack.Navigator>
   );
 
@@ -51,7 +53,7 @@ const Router = () => {
   );
 
   // Trả về MainRouter hoặc AuthRouter dựa vào isLogin
-  return isLogin ? MainRouter : AuthRouter;
+  return true ? MainRouter : AuthRouter;
 };
 
 export default Router;

@@ -5,7 +5,6 @@ import { useNavigation } from '@react-navigation/native'
 import RowComponent from './RowComponent'
 import Ionicons from '@expo/vector-icons/Ionicons';
 import TextComponent from './TextComponent'
-import SpaceComponent from './SpaceComponent'
 import { fontFamilies } from '../constants/fontFamilies'
 
 interface Props {
@@ -33,7 +32,7 @@ const Container = (props : Props) => {
          onPress={()=> navigation.goBack()}
          style={{padding:4}}
          >
-          <Ionicons name="chevron-back-sharp" size={28} color="white" />
+          <Ionicons name="chevron-back-sharp" size={28} color="white"/>
 
         </TouchableOpacity>}
 
