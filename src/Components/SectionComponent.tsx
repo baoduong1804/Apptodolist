@@ -4,12 +4,13 @@ import { globalStyles } from '../styles/globalStyles'
 
 interface Props {
     children:ReactNode,
+    isNotpadding?:boolean,
     styles?:StyleProp<ViewStyle>
 }
 const SectionComponent = (props: Props) => {
-    const {children,styles} = props
+    const {children,styles,isNotpadding} = props
   return (
-    <View style={[globalStyles.section,styles]}>
+    <View style={[isNotpadding ? {}: globalStyles.section,styles]}>
         {children}
     </View>
   )

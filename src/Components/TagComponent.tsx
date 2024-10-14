@@ -19,7 +19,7 @@ const TagComponent = (props: Props) => {
         disabled={!onPress}
         style={[globalStyles.tag,
          tagStyles,
-         {backgroundColor:color??colors.blueBottom}
+         {backgroundColor:color??colors.blueButton}
     ]}>
         <TextComponent text={text} styles={textStyles}/>
     </TouchableOpacity>

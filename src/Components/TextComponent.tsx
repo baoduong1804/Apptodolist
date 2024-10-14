@@ -10,13 +10,17 @@ interface Props {
     font?:string,
     color?:string,
     flex?:number,
+    maxLength?:number,
+    line?:number,
     styles?: StyleProp<TextStyle>
 }
 const TextComponent = (props: Props) => {
-    const {text,size,font,color,flex,styles} = props
-    const maxLength = 60
+    const {text,size,font,color,flex,styles,maxLength,line} = props
+    
   return (
-      <Text style={[globalStyles.text,{
+      <Text 
+      numberOfLines={line}
+      style={[globalStyles.text,{
         flex: flex ?? 1,
         fontFamily:font ?? fontFamilies.regular,
         fontSize: size ?? globalStyles.text.fontSize,
@@ -24,7 +28,7 @@ const TextComponent = (props: Props) => {
         
       },
       styles
-    ]}>{text.length > maxLength ? `${text.slice(0, maxLength)}...` : text}</Text>
+    ]}>{text}</Text>
   )
 }
 

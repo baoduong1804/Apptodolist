@@ -35,6 +35,7 @@ const HomeScreen = ({navigation}:any) => {
     const unsubscribe = onSnapshot(collection(db, 'tasks'), (snapshot) => {
       const items: TaskModel[] = []
       snapshot.docs.forEach((doc:any) => {
+        console.log("start",doc.data())
         items.push({
           ...doc.data(),
           id:doc.id,
@@ -48,7 +49,6 @@ const HomeScreen = ({navigation}:any) => {
     // Clean up the listener on unmount
     return () => unsubscribe();
   }, []);
-
   
   return (
     <View style={{flex:1}}>
@@ -122,7 +122,7 @@ const HomeScreen = ({navigation}:any) => {
                 />
               </TouchableOpacity>
               <TitleComponent text={tasks[0]?.title || "Title"} />
-              <TextComponent text={tasks[0]?.description || "description"} />
+              <TextComponent text={tasks[0]?.description || "description"} line={2}/>
               <View style={{marginVertical:28}}>
                 <AvatarGroup uidsLength={tasks[0]?.uids.length || 0} />
               </View>
@@ -170,7 +170,7 @@ const HomeScreen = ({navigation}:any) => {
                 />
               </TouchableOpacity>
               <TitleComponent text={tasks[2]?.title || "Title"} />
-              <TextComponent text={tasks[2]?.description || "description"} />
+              <TextComponent text={tasks[2]?.description || "description"} line={2}/>
             </CardImageComponent>
           </View>
         </RowComponent>
